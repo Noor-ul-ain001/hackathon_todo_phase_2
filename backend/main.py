@@ -1,6 +1,8 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.api.routes import tasks, auth
+from src.database.connection import create_db_and_tables
 
 app = FastAPI(
     title="Agentic Todo API",
@@ -17,8 +19,10 @@ app.add_middleware(
         "http://localhost:3001",
         "http://127.0.0.1:3001",
         "http://localhost:3002",
-        "http://127.0.0.1:3002"
-    ],  # Next.js development server
+        "http://127.0.0.1:3002",
+        "https://frontend-ten-theta-kem1gh6di0.vercel.app",
+        os.getenv("FRONTEND_URL", ""),
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,9 +33,13 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(tasks.router)
 
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
 @app.get("/")
 def read_root():
-    return {"message": "Agentic Todo API - Phase 1"}
+    return {"message": "Agentic Todo API - Phase 2"}
 
 @app.get("/health")
 def health_check():
