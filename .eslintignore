@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+dist/
+build/
+
+# Generated files
+.next/
+.nuxt/
+out/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env*
+
+# IDE
+.vscode/
+.idea/
+
+# Python specific (for the CLI app)
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
