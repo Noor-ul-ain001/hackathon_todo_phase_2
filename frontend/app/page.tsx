@@ -40,18 +40,29 @@ export default function Home() {
         const token = localStorage.getItem('auth_token');
 
         if (userId && token) {
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}/${userId}/tasks`, {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+          const normalizedApiUrl = apiUrl.endsWith('/api') ? apiUrl : apiUrl.replace(/\/$/, '') + '/api';
+          
+          fetch(`${normalizedApiUrl}/${userId}/tasks`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           })
-          .then(res => res.json())
+          .then(res => {
+            if (!res.ok) {
+              throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+          })
           .then(tasks => {
             const total = tasks.length;
             const completed = tasks.filter((t: any) => t.completed).length;
             setUserStats({ totalTasks: total, completedTasks: completed });
           })
-          .catch(err => console.error('Failed to fetch user stats:', err));
+          .catch(err => {
+            console.error('Failed to fetch user stats:', err);
+            // Don't throw the error, just log it to prevent the white screen
+          });
         }
       }
     };

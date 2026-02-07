@@ -79,7 +79,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Fetch tasks when user is authenticated
   useEffect(() => {
     if (isAuthenticated && userId) {
-      refreshTasks();
+      refreshTasks().catch(error => {
+        console.error('Failed to load tasks initially:', error);
+        // Don't throw the error, just log it to prevent the white screen
+      });
     }
   }, [isAuthenticated, userId]);
 
@@ -88,7 +91,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!isAuthenticated || !userId) return;
 
     const interval = setInterval(() => {
-      refreshTasks();
+      refreshTasks().catch(error => {
+        console.error('Failed to refresh tasks:', error);
+        // Don't throw the error, just log it to prevent the white screen
+      });
     }, 30000); // 30 seconds
 
     return () => clearInterval(interval);
